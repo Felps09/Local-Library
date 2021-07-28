@@ -14,15 +14,23 @@ var helmet = require('helmet');
 var app = express();
 
 
+
 app.use(helmet());
 app.use(compression()); //Compress all routes
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/catalog', catalogRouter);  // Add catalog routes to middleware chain.
+
 
 //Set up mongoose connection
 var mongoose = require('mongoose');
-var mongoDB = 'mongodb+srv://Brad1409:Brad1409@cluster0.qkl9s.mongodb.net/local-library?retryWrites=true&w=majority';
+// Set up mongoose connection
+var dev_db_url = 'mongodb+srv://Brad1409:Brad1409@cluster0.qkl9s.mongodb.net/local-library?retryWrites=true&w=majority'
+var mongoDB = process.env.MONGODB_URI || dev_db_url;
+
 mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
